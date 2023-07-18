@@ -13,7 +13,6 @@ This will ==write out the .lib, .prm and .pdb files== needed for stage 3. The .l
 
 [[OPLS]]
 
-
 2. Protprep
 The second step is needed to prepare a protein for simulations under spherical boundary conditions (SBC). Note that this script does not attempt to assign protonation states, so one needs to run a ==preparation step first (e.g. Maestro's Protein Preparation Wizard==). 
 

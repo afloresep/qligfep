@@ -98,23 +98,13 @@ class Run(object):
         for method in methods:
             dG_array = []
             for key in sorted(methods[method]):
-                print(method, key, methods[method][key])
+               # print(method, key, methods[method][key])
                 dG_array.append(methods[method][key])
             dG_array = [[float(i) for i in fep_stage] for fep_stage in dG_array]
             dG_array = np.array(dG_array)
             dG = f.avg_sem(dG_array)
             results[method]='{:6.2f}{:6.2f}'.format(*dG)
             
-        for method in methods_list:
-           print(results[method])
-        
-        data_dG = {'Method': methods_list, 'Value': out}
-        print(data_dG)
-
-        # df = pd.DataFrame(data_dG)
-
-        print("this")
-        print(methods)
         self.methods = methods
         
         key_method = []
@@ -125,15 +115,11 @@ class Run(object):
             key_method.append(key)
             dG_values.append(value['1.QligFEP_CDK2'])
         
-        # Display the results 
-        for name, value in zip(key_method, dG_values):
-            print(f"{name} = {value}")
-
-    '''
-        for method in methods: 
-            print(self.FEP, '{} {} {} {} {}'.format(*out))
-            print('crashes  {}'.format(len(self.failed)))
-    '''
+    
+        # for method in methods:
+            # print(method) 
+        print('crashes  {}'.format(len(self.failed)))
+    
     def read_mdlog(self):
         mapping = {}
         cnt = -1
@@ -161,7 +147,7 @@ class Run(object):
             value = methods[key]['1.QligFEP_CDK2']
             value_without_nan = np.array(value)[~np.isnan(value)]
             SEM = np.std(value_without_nan)/(np.sqrt(len(value_without_nan)))
-            print(f"{key}, {value}, SEM: {SEM}")
+            print(f"{key}: {value}, SEM: {SEM}")
     
     def plot_data(self):
         y_axis = {}

@@ -147,7 +147,7 @@ class Run(object):
             value = methods[key]['1.QligFEP_CDK2']
             value_without_nan = np.array(value)[~np.isnan(value)]
             SEM = np.std(value_without_nan)/(np.sqrt(len(value_without_nan)))
-            print(f"{key}: {value}, SEM: {SEM}")
+            print(f"{key},{value},{SEM}")
     
     def plot_data(self):
         y_axis = {}

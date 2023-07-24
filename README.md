@@ -64,3 +64,4 @@ according to the given example.
 
 contact: [Willem Jespers (PhD)](mailto:w.jespers@lacdr.leidenuniv.nl?subject=[QLigFEP]%20[QResFEP])
 
+Added collect_dG.py to see dG in csv formats from 1.protein and 2.water just using one line of code. 

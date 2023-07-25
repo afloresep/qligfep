@@ -5,7 +5,7 @@ import glob
 import numpy as np
 import pandas as pd
 import os
-
+import csv
 
 import functions as f
 import settings as s
@@ -106,6 +106,7 @@ class Run(object):
             results[method]='{:6.2f}{:6.2f}'.format(*dG)
             
         self.methods = methods
+        print(methods)
         
         key_method = []
         dG_values = []
@@ -114,11 +115,10 @@ class Run(object):
         for key, value in methods.items():
             key_method.append(key)
             dG_values.append(value['1.QligFEP_CDK2'])
-        
     
         # for method in methods:
             # print(method) 
-        print('crashes  {}'.format(len(self.failed)))
+        # print('crashes  {}'.format(len(self.failed)))
     
     def read_mdlog(self):
         mapping = {}
@@ -141,13 +141,33 @@ class Run(object):
             cumulative_l = (mapping[l] + offset)
             (cumulative_l)
     
-    def SEM_calulator(self):
+ 
+
+    def SEM_calculator(self, output_file, FEP):
         methods = self.methods
-        for key in methods:
-            value = methods[key]['1.QligFEP_CDK2']
-            value_without_nan = np.array(value)[~np.isnan(value)]
-            SEM = np.std(value_without_nan)/(np.sqrt(len(value_without_nan)))
-            print(f"{key},{value},{SEM}")
+        existing_file = os.path.isfile(output_file)
+        if existing_file:
+            filename_base, file_extension = os.path.splitext(output_file)
+            index = 0
+            while existing_file:
+                new_filename = f"{filename_base}-{index}{file_extension}"
+                existing_file = os.path.isfile(new_filename)  # Update the existing_file variable
+                index += 1
+            output_file = new_filename
+            
+        with open(output_file, 'w', newline='') as csvfile:
+            csv_writer = csv.writer(csvfile)
+
+            # Add the FEP directory path as a row at the top (header)
+            csv_writer.writerow(['FEP Directory Path'])
+            csv_writer.writerow([FEP])
+
+            csv_writer.writerow(['Key', 'Value', 'SEM'])
+            for key in methods:
+                value = methods[key]['1.QligFEP_CDK2']
+                value_without_nan = np.array(value)[~np.isnan(value)]
+                SEM = np.std(value_without_nan) / (np.sqrt(len(value_without_nan)))
+                csv_writer.writerow([key, value, SEM])
     
     def plot_data(self):
         y_axis = {}
@@ -270,7 +290,6 @@ if __name__ == "__main__":
                         required = False,
                         help = "Add this argument in case you have singularities in the final lambda windows resulting in only nan values")
     
-    
     args = parser.parse_args()
     run = Run(FEP = args.FEP,
               color = args.color,
@@ -281,11 +300,11 @@ if __name__ == "__main__":
     
     run.create_environment()
     run.read_FEPs()
-    run.SEM_calulator()
+    run.SEM_calculator('output1.csv', args.FEP)
     run.read_mdlog()
     
-#    if plot == True:
-#        run.plot_data()
+    if plot == True:
+        run.plot_data()
         
     if args.PDB == True:
         run.write_re2pdb()

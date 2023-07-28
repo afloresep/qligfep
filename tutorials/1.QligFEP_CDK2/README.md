@@ -36,12 +36,13 @@ The center of the sphere can be determined based on a residue in the protein or,
 
 `python $qligfep/scripts/COG.py -i ../1.ligprep/17.pdb`
 
-! Make sure to **add -i before the pdb file**. Tis will return the coordinates 0.535:26.772:8.819, which can be directly put in protprep.py:
+! Make sure to **add -i before the pdb file**. This will return the coordinates [0.535:26.772:8.819], which can be directly put in protprep.py:
 
-`python $qligfep/protprep.py -p 1h1s_PrepWiz.pdb -r 22 -c 0.535:26.772:8.819 -w -P CSB`
+`python $qligfep/protprep.py -p 1h1s_PrepWiz.pdb -r 22 -c [0.535:26.772:8.819] -w -P CSB`
 
-Note: For this step, navigate to the folder containing the 1h1s_PrepWiz.pdb file before executing the above command.
+**Note: Prior to executing the above command, ensure that you have navigated to the folder containing the "1h1s_PrepWiz.pdb" file.**
 
+Furthermore, it is essential to bear in mind that the ligands under investigation share a similar core region, with only minor variations in small substituents. During previous phases, these ligands were superimposed, likely using Maestro. As a result, their centers of geometry are nearly identical. Therefore, we need to perform this process for just one ligand, saving time and effort.
 
 # 3.setupFEP
 

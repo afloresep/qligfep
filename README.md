@@ -64,4 +64,14 @@ according to the given example.
 
 contact: [Willem Jespers (PhD)](mailto:w.jespers@lacdr.leidenuniv.nl?subject=[QLigFEP]%20[QResFEP])
 
-Added collect_dG.py to see dG in csv formats from 1.protein and 2.water just using one line of code. 
+
+# Improvements: 
+1. Added collect_dG.py to see dG in csv formats from 1.protein and 2.water just using one line of code.
+2. README.md in tutorial is more clear and contains updated commands.
+3. Changed setup.py:
+   1. Now is able to copy the files from 1.ligprep to 3.setup so it is not necessary to do it manually
+   2. In case there's an existing folder from previous runs (i.e. 1.protein), creates a new folder (i.e. 1.protein-2)
+
+
+
+

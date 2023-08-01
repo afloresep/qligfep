@@ -47,7 +47,6 @@ print(csv_filenames)
 
 # Move the .csv files inside the output folder
 for csv_file in csv_filenames:
-    print('this is csv_file', csv_file)
     if os.path.exists(csv_file):  # Check if the .csv file exists before moving
         try:
             shutil.move(csv_file, os.path.join(output_folder, csv_file))
@@ -56,4 +55,4 @@ for csv_file in csv_filenames:
 
 # List all .csv files only in the current directory (excluding the moved files)
 csv_files = glob.glob('*.{}'.format('csv'))
-print(type(csv_files))
+

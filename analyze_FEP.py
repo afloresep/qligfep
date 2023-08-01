@@ -148,7 +148,7 @@ class Run(object):
         existing_file = os.path.isfile(output_file)
         if existing_file:
             filename_base, file_extension = os.path.splitext(output_file)
-            index = 0
+            index = 1
             while existing_file:
                 new_filename = f"{filename_base}-{index}{file_extension}"
                 existing_file = os.path.isfile(new_filename)  # Update the existing_file variable
@@ -300,7 +300,7 @@ if __name__ == "__main__":
     
     run.create_environment()
     run.read_FEPs()
-    run.SEM_calculator('output1.csv', args.FEP)
+    run.SEM_calculator('dG.csv', args.FEP)
     run.read_mdlog()
     
     if plot == True:

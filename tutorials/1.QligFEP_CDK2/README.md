@@ -24,8 +24,8 @@ Important!
 If you haven't, you can do it following these steps:
     1. `cd` to your home folder
     2. `nano ~/.bashrc`
-    3. Add this to the end of the file: `export qligfep=home/USERNAME/QLIGFEP/qligfep`
-    - Keep in mind that `home/USERNAME/QLIGFEP/qligfep` should be replaced with the PATH to your qligfep folder. If you're not sure of what the path to it is, go to your qligfep folder and run `pwd` to find out. Then, simply replace `home/USERNAME/QLIGFEP/qligfep` with the returned path from pwd. 
+    3. Add this to the end of the file: `export qligfep=/home/USERNAME/QLIGFEP/qligfep`
+    - Keep in mind that `home/USERNAME/QLIGFEP/qligfep` should be replaced with the PATH to your qligfep folder. If you're not sure of what the path to it is, go to your qligfep folder and run `pwd` to find out. Then, simply replace `/home/USERNAME/QLIGFEP/qligfep` with the returned path from pwd. 
     5. Use `source ~/.bashrc` to apply the changes
   
 

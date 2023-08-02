@@ -1,11 +1,7 @@
-#!/usr/bin/env python
-
 import argparse
 import glob
 import numpy as np
-import pandas as pd
 import os
-import csv
 
 import functions as f
 import settings as s
@@ -23,15 +19,13 @@ except:
 class Run(object):
     """
     """
-    def __init__(self, FEP, color, PDB, cluster, esc, *args, **kwargs):
-        self.esc = esc
+    def __init__(self, FEP, color, PDB, cluster, *args, **kwargs):
         self.cluster=cluster
         self.FEP = FEP.strip('/')
         self.energies = {}
         self.FEPstages = []
         FEPfiles = glob.glob(self.FEP + '/inputfiles/FEP*.fep')
         inputs = glob.glob(self.FEP + '/inputfiles/md*.inp')
-        inputs = [x for x in inputs if not '_F.inp' in x]
         FEPfiles.sort()
         self.failed = []
         for FEPfile in FEPfiles:
@@ -73,16 +67,17 @@ class Run(object):
             replicate = file_parse[3]
             
             try:
-                if self.esc:
-                    energies = IO.read_qfep_esc(filename)
-                else:
-                    energies = IO.read_qfep(filename)
+                energies = IO.read_qfep(filename)
             except:
                 print("Could not retrieve energies for: " + filename)
                 energies = [np.nan, np.nan, np.nan, np.nan, np.nan]
-                if not replicate in self.failed:
-                    self.failed.append(replicate)
-            
+                self.failed.append(replicate)
+            #try:
+            #    energies = IO.read_qfep(filename)
+            #except:
+            #    print "Could not retrieve energies for: " + filename
+            #    energies = [np.nan, np.nan, np.nan, np.nan, np.nan]
+
             for key in methods_list:
                 i += 1
                 try:
@@ -97,29 +92,19 @@ class Run(object):
             self.energies[replicate][FEP] = IO.read_qfep_verbose(filename)
         for method in methods:
             dG_array = []
-            for key in sorted(methods[method]):
-               # print(method, key, methods[method][key])
+            for key in methods[method]:
+                print(method, key, methods[method][key])
                 dG_array.append(methods[method][key])
-            dG_array = [[float(i) for i in fep_stage] for fep_stage in dG_array]
             dG_array = np.array(dG_array)
+            dG_array = dG_array.astype(float)
             dG = f.avg_sem(dG_array)
             results[method]='{:6.2f}{:6.2f}'.format(*dG)
             
-        self.methods = methods
-        print(methods)
-        
-        key_method = []
-        dG_values = []
+        for method in methods_list:
+            out.append(results[method])
 
-        # Iterate through the dictionary
-        for key, value in methods.items():
-            key_method.append(key)
-            dG_values.append(value['1.QligFEP_CDK2'])
-    
-        # for method in methods:
-            # print(method) 
-        # print('crashes  {}'.format(len(self.failed)))
-    
+        print(self.FEP, '{} {} {} {} {}'.format(*out))
+        
     def read_mdlog(self):
         mapping = {}
         cnt = -1
@@ -140,48 +125,13 @@ class Run(object):
             offset = (int(stage) - 1) * int(windows)
             cumulative_l = (mapping[l] + offset)
             (cumulative_l)
-    
- 
-
-    def SEM_calculator(self, output_file, FEP):
-        methods = self.methods
-        existing_file = os.path.isfile(output_file)
-        if existing_file:
-            filename_base, file_extension = os.path.splitext(output_file)
-            index = 1
-            while existing_file:
-                new_filename = f"{filename_base}-{index}{file_extension}"
-                existing_file = os.path.isfile(new_filename)  # Update the existing_file variable
-                index += 1
-            output_file = new_filename
             
-        with open(output_file, 'w', newline='') as csvfile:
-            csv_writer = csv.writer(csvfile)
-
-            # Add the FEP directory path as a row at the top (header)
-            csv_writer.writerow(['FEP Directory Path'])
-            csv_writer.writerow([FEP])
-
-            csv_writer.writerow(['Key', 'Value', 'SEM'])
-            for key in methods:
-                value = methods[key]['1.QligFEP_CDK2']
-                value_without_nan = np.array(value)[~np.isnan(value)]
-                SEM = np.std(value_without_nan) / (np.sqrt(len(value_without_nan)))
-                csv_writer.writerow([key, value, SEM])
-    
     def plot_data(self):
         y_axis = {}
         x_axis = range(0,self.lambda_sum+1)
         avg = []
-        for replicate in self.energies:
-            for FEPstage in self.FEPstages:
-                if not FEPstage in self.energies[replicate] and not replicate in self.failed:
-                    self.failed.append(replicate)
         for replicate in self.failed:
-            try:
-                del self.energies[replicate]
-            except:
-                continue
+            del self.energies[replicate]
         for replicate in self.energies:
             y_axis[replicate] = [0]
             dG = 0
@@ -190,7 +140,7 @@ class Run(object):
                     energy = dG + energy
                     y_axis[replicate].append(energy)
                 dG+=self.energies[replicate][FEPstage][0][-1]
-
+        
         for y in y_axis:
             for i,energy in enumerate(y_axis[y]):
                 if len(avg) < self.lambda_sum + 1:
@@ -231,8 +181,7 @@ class Run(object):
             for re_file in re_files:
                 pdb_out = re_file.split('/')[-1][:-3]
                 repeat = '{:02d}'.format(int(re_file.split('/')[3]))
-                fep_stage = re_file.split('/')[1]
-                pdb_out = 'pdbs/{}_{}_{}'.format(repeat, fep_stage, pdb_out)
+                pdb_out = 'pdbs/{}_{}'.format(repeat, pdb_out)
                 outfile.write('rx {}\n'.format(re_file))
                 outfile.write('wp {}.pdb\n'.format(pdb_out))
                 outfile.write('y\n')
@@ -243,7 +192,7 @@ class Run(object):
             outfile.write('y\n')
             
             outfile.write('q\n')
-
+            
         cluster_options = getattr(s, self.cluster)
         qprep = cluster_options['QPREP']
         options = ' < re2pdb.inp > re2pdb.out'
@@ -283,24 +232,19 @@ if __name__ == "__main__":
     
     parser.add_argument('-C', '--cluster',
                         dest = "cluster",
-                        required = False,
+                        required = True,
                         help = "cluster information")
-    parser.add_argument('-esc', '--end-state-catastrophe',
-                        dest = "esc",
-                        required = False,
-                        help = "Add this argument in case you have singularities in the final lambda windows resulting in only nan values")
+    
     
     args = parser.parse_args()
     run = Run(FEP = args.FEP,
               color = args.color,
               cluster = args.cluster,
-              PDB = args.PDB,
-              esc = args.esc
+              PDB = args.PDB
              )
     
     run.create_environment()
     run.read_FEPs()
-    run.SEM_calculator('dG.csv', args.FEP)
     run.read_mdlog()
     
     if plot == True:

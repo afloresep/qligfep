@@ -65,16 +65,36 @@ This script will either submit your jobs to a slurm queue (see the setup section
 A typical procedure is to put the two systems in a top layer folder to easily track running calculations (e.g. 1.TESTRUN) in the case of this example. Of course, these toplayer scripts can be easily adjusted for any other use (e.g. to calculate solvation free energies, you add a water and vacuum leg, instead of protein water.
 
 
-# 4. Analyze
+# 4. Analyze dG in protein and water. 
 
-Run `python analyze_FEP.py -F tutorials/1.QligFEP_CDK2/3.setupFEP/1.protein/FEP_22-17 -C CSB` from the `QLIGFEP/qligfep` folder. 
-Otherwise it won't work because functions.py cannot be imported. 
+Run `python analyze_FEP.py -F tutorials/1.QligFEP_CDK2/3.setupFEP/1.protein/FEP_22-17 -C CSB` from the `QLIGFEP/qligfep` folder. Otherwise it won't work because functions.py cannot be imported.  
+This will give us the dG calculations for the pair 22-17 in 1.protein. You will have as many FEP_ligand1-ligand2 folders as pairs indicated in the `pairs.txt` file. 
+You need to run `analyze_FEP.py` in all of them, for both `1.protein` and `2.water` folders.
 
-Additionally, you can try using collect_dG.py to analyze several folders at once. See the instructions provided on how to use this script below the page. The output of the analysis will contain dG, dGf, dGr, dGos, and dGbar, representing different ways of calculating dG. For most cases, dGbar is used. There will be 10 values corresponding to 10 replicas (runs), and some values may be "nan," which is normal. Thanks to changes in this forked repository, SEM is calculated only with existing values (nan values are dropped).
+- If you want to call analzye_FEP.py for all folders located in 1.protein or 2.water (those named after the pair.txt file: i.e. FEP_17-22) you may use `call_analyzeFEP.py` located in qligfep folder as:
+`python call_analyze_FEP.py path_to_1.protein_folder -C CSB` and then `python call_analyze_FEP.py path_to_2.water_folder -C CSB`. 
 
-To change the number of runs, modify the FEP_submit.sh file located in the path: /home/USER/QLIGFEP/qligfep/tutorials/1.QligFEP_CDK2/3.setupFEP/1.protein/FEP_17-22
+Additionally, you can try using collect_dG.py to analyze several folders at once. See the instructions provided on how to use this script below the page. The output of the analysis will contain dG, dGf, dGr, dGos, and dGbar, representing different ways of calculating dG. For most cases, dGbar is used. There will be 10 values corresponding to 10 replicas/runs (although the number of runs can be changed), and some values may be "nan," which is normal. Thanks to changes in this forked repository, SEM is calculated only with existing values (nan values are dropped).
+**To change the number of runs**, modify the FEP_submit.sh file located in the path: /home/USER/QLIGFEP/qligfep/tutorials/1.QligFEP_CDK2/3.setupFEP/1.protein/FEP_17-22
 
+So far, we have collected the dG values for each ligand pair in water and in protein. The reason we need both of them in order to calculate the ddG is that we need a complete thermodynamic cycle to calculate:
+dGprotein - dGwater. 
 
+## Following steps:
+### Calculating ddG: 
+It will be easier to create an excel file. You can download an excel template from `https://github.com/afloresep/MolecularDynamics` 
+In summary, with the help of the template we will calculate: 
+1. Average dG for each ligand pair in Protein
+ $$\bar{dG_{\text{protein}}} = \frac{\sum_{i=1}^{n} dG_{\text{}, i}}{n_{\text{}}}$$
+2. Average dG for each ligand pair in Water
+ $$\bar{dG_{\text{water}}} = \frac{\sum_{i=1}^{n} dG_{\text{}, i}}{n_{\text{}}}$$
+3. ddG for each pair (ddG(A->B) = AVG(dGprotein) - AVG(dGwater)
+$$ddG(A \to B) = \bar{dG_{\text{protein}}} - \bar{dG_{\text{water}}}$$
+
+5. Calculate SEM (Standard Error of the Mean) for protein and water: $$SEM = \frac{\sigma}{\sqrt{n}}$$
+6. Calculate SEM final: $$SEM_{f} = \sqrt{SEM_{\text{water}}^2 + SEM_{\text{protein}}^2}$$
+Finally we get: 
+$$ddG (A \to B) \pm \sqrt{SEM_{\text{water}}^2 + SEM_{\text{protein}}^2}$$
 ## How to Use collect_dG.py
 
 `collect_dG.py` is a python script that allows you to call analyze_FEP.py for different folders (usually 1.protein/FEP_pair and 2.water/FEP_pair) with a single command  and stores the results in different .csv files so it's easier to work with the results later on.

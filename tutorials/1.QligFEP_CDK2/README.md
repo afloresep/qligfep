@@ -95,7 +95,14 @@ $$ddG(A \to B) = \bar{dG_{\text{protein}}} - \bar{dG_{\text{water}}}$$
 6. Calculate SEM final: $$SEM_{f} = \sqrt{SEM_{\text{water}}^2 + SEM_{\text{protein}}^2}$$
 Finally we get: 
 $$ddG (A \to B) \pm \sqrt{SEM_{\text{water}}^2 + SEM_{\text{protein}}^2}$$
-## How to Use collect_dG.py
+
+Tipically you will want to compare this results with experimental ones. 
+You can calculate experimental ddG from Ki (_constant of inhibition_) using the following formula: 
+$$\Delta G^\circ = -RT \ln K$$
+
+
+
+#### How to Use collect_dG.py
 
 `collect_dG.py` is a python script that allows you to call analyze_FEP.py for different folders (usually 1.protein/FEP_pair and 2.water/FEP_pair) with a single command  and stores the results in different .csv files so it's easier to work with the results later on.
 

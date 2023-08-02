@@ -82,7 +82,8 @@ dGprotein - dGwater.
 
 ## Following steps:
 ### Calculating ddG: 
-It will be easier to create an excel file. You can download an excel template from `https://github.com/afloresep/MolecularDynamics` 
+It will be easier to create an excel file. You can download an excel template from [here](https://github.com/afloresep/qligfep/blob/master/ddG_template.xlsx)
+
 In summary, with the help of the template we will calculate: 
 1. Average dG for each ligand pair in Protein
  $$\bar{dG_{\text{protein}}} = \frac{\sum_{i=1}^{n} dG_{\text{}, i}}{n_{\text{}}}$$

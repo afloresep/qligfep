@@ -1,8 +1,8 @@
-#### Why Perform Molecular Dynamics (MD) of a Docking Pose?
+#### Why Perform Molecular Dynamics (MD) of a Docking Pose?
 
 The reason for conducting MD of a docking pose is that the initial docking is usually carried out under vacuum conditions, resulting in hypothetical conformations of the protein-ligand complex. To confirm the best pose, it is essential to investigate the system's effects and dynamics in different solvent environments. By performing MD simulations, one gains insights into the stability of various complexes.
 
-#### Workflow Template
+#### Workflow Template
 
 To streamline your workflow, you can copy the template folder provided in the repository. This folder contains all the necessary files and resources for the common use case in QligFEP. Specifically, you will need to place your ligand .pdb files in the 1.ligprep folder and your_protein.pdb in the 2.protprep folder.
 For each step, move to the folder named as the step itself. 

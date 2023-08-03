@@ -1,6 +1,7 @@
-#### Why Perform Molecular Dynamics (MD) of a Docking Pose?
+#### Why perform Molecular Dynamics (MD) of a Docking Pose?
 
-The reason for conducting MD of a docking pose is that the initial docking is usually carried out under vacuum conditions, resulting in hypothetical conformations of the protein-ligand complex. To confirm the best pose, it is essential to investigate the system's effects and dynamics in different solvent environments. By performing MD simulations, one gains insights into the stability of various complexes.
+Molecular Dynamics (MD) simulations of docking poses serve a crucial purpose in validating and refining initial docking results. When docking is initially performed, it is often done under vacuum conditions, leading to the generation of hypothetical conformations for the protein-ligand complex. However, to ensure the accuracy and reliability of the identified pose, it becomes imperative to explore the system's behavior and dynamics in various solvent environments.
+
 
 #### Workflow Template
 
@@ -101,74 +102,92 @@ A typical procedure is to put the two systems in a top layer folder to easily tr
 
 If you want to submit all the jobs at once without having to go into each pair folder, you can copy `subimt_all.py` to your `1.protein` or `2.water` folder and then run it. This python script will find all the folders starting as 'FEP_' (basically, all the folders named after the pairs.txt file) and submit their job. 
 
-_Note: Only in this forked version submit_all.py exists. If your using the original repository you will have to submit all the jobs manually or copy the code for submit_all.py from [here](www.google.com) and add it to your workspace._
+_Note: Only in this forked version submit_all.py exists. If your using the original repository you will have to submit all the jobs manually or copy the code for submit_all.py from [CHAAANGEEEEE](www.google.com) and add it to your workspace._
 
 # 4. Analyze dG in protein and water. 
-For this, run:
+Run the analyze_FEP.py script with the appropriate parameters:
 `python analyze_FEP.py -F path_to_FEP_pair1-pair2_folder -C CLUSTER`
 In this tutorial this will be:
 `python analyze_FEP.py -F tutorials/1.QligFEP_CDK2/3.setupFEP/1.protein/FEP_22-17 -C CSB` 
 
-_Note: You have to do this from the `QLIGFEP/qligfep` folder. Otherwise it won't work because some python scripts as functions.py cannot be imported._
 
+_Note: You should run this command for each FEP_ligand1-ligand2 folder specified in the pairs.txt file, located in both the `1.protein` and `2.water` folders._
 
 This will give us the dG calculations for the pair 22-17 in 1.protein. You will have as many FEP_ligand1-ligand2 folders as pairs indicated in the `pairs.txt` file. Thus, you will need to run `analyze_FEP.py` in all of them, for both `1.protein` and `2.water` folders.
 Nonetheless, if you want to call analzye_FEP.py for all folders located in 1.protein or 2.water (those named after the pair.txt file: i.e. FEP_17-22) you may use `call_analyzeFEP.py` located in qligfep folder as:
 `python call_analyze_FEP.py path_to_1.protein_folder -C CSB` and then `python call_analyze_FEP.py path_to_2.water_folder -C CSB`. 
 
-_Note: Again, this are python scripts only founded in this repository. If you are not using this repository but the original one, you will have to do it manually._
+_Note: Again, these are python scripts specific to this repository and may not be available in the original repository where you will have to do it manually._
 
-Additionally, you can try using `collect_dG.py` to analyze several folders at once. See the instructions provided on how to use this script below the page. The output of the analysis will contain dG, dGf, dGr, dGos, and dGbar, representing different ways of calculating dG. For most cases, dGbar is used. There will be 10 values corresponding to 10 replicas/runs (although the number of runs can be changed), and some values may be "nan," which is normal. Thanks to changes in this forked repository, SEM is calculated only with existing values (nan values are dropped).
-**To change the number of runs**, modify the FEP_submit.sh file located in the path: /home/USER/QLIGFEP/qligfep/tutorials/1.QligFEP_CDK2/3.setupFEP/1.protein/FEP_17-22
+Additionally, you can try using `collect_dG.py` script to analyze multiple folders simultaneously. Refer to the provided instructions below the page on how to use this script. The output will contain dG, dGf, dGr, dGos, and dGbar values, with dGbar typically being used. There will be 10 values corresponding to 10 replicas/runs (which can be modified). Any "nan" values are expected and will be handled appropriately.
 
-So far, we have collected the dG values for each ligand pair in water and in protein. The reason we need both of them in order to calculate the ddG is that we need a complete thermodynamic cycle.
+**To change the number of runs**, modify the FEP_submit.sh file located in the path: 
+/home/USER/QLIGFEP/qligfep/tutorials/1.QligFEP_CDK2/3.setupFEP/1.protein/FEP_17-22
+
+It is necessary to collect dG values for both ligand pairs in water and protein since a complete thermodynamic cycle is needed to calculate ddG.
+(for further understanding of the thermodynamic cycle: https://pubs.acs.org/doi/pdf/10.1021/acs.jcim.7b00564)
 
 ## Following steps:
 ### Calculating ddG: 
-First, we have to ask the question: _Why do we want to calculate ddG in the first place?_
-We want to calculate the difference in binding free energy (ddGbind) for two ligands (or several pair of ligands for that matter), beacause it allows us to determine their relative binding affinities to the receptor (usually a protein).
+First, we have to ask the question: 
+#### _Why do we want to calculate ddG in the first place?_
+Before diving into the calculation of ddG, let's understand its purpose. The primary objective is to determine the difference in binding free energy (ddGbind) between two ligands or multiple pairs of ligands with slight variations. This allows us to assess their relative binding affinities to the receptor. ddGbind represents the energy required for one ligand (B) to bind the receptor compared to another ligand (A).
 
-It will be easier to create an excel file. You can download an excel template from [here](https://github.com/afloresep/qligfep/blob/master/ddG_template.xlsx)
+
+#### _How can we calculate ddG?_
+To calculate ddG, we rely on Free Energy Perturbation (FEP) simulations conducted in both the protein and water environments. The difference in free energy between these two transformations ($$\Delta G_{R} - \Delta G_{w}$$) will be theoretically equivalent to the differnece in binding free energy between the two ligands $$\Delta\Delta G_{\text{bind (B-A)}} = \Delta G_{\text{bind, B}} - \Delta G_{\text{bind, A}}$$). For a more detailed explanation of this concept you can refer to [this article](https://link.springer.com/protocol/10.1007/978-1-0716-1209-5_12)
+
+In summary, we need to take the dG results obtained from step 4 and calculate the difference between the two states (protein and water) for all ligand pairs.
+
+
+
+
+_For ease of calculation, we can utilize an Excel file. An Excel template is available for download from [here](https://github.com/afloresep/qligfep/blob/master/ddG_template.xlsx)_
 
 In summary, with the help of the template we will calculate: 
-1. Average dG for each ligand pair in Protein
- $$\bar{dG_{\text{protein}}} = \frac{\sum_{i=1}^{n} dG_{\text{}, i}}{n_{\text{}}}$$
-2. Average dG for each ligand pair in Water
+1. Calculate the average dG for each ligand pair in the protein environment:
+   $$\bar{dG_{\text{protein}}} = \frac{\sum_{i=1}^{n} dG_{\text{}, i}}{n_{\text{}}}$$
+2. Calculate the average dG for each ligand pair in the water environment:
  $$\bar{dG_{\text{water}}} = \frac{\sum_{i=1}^{n} dG_{\text{}, i}}{n_{\text{}}}$$
-3. ddG for each pair (ddG(A->B) = AVG(dGprotein) - AVG(dGwater)
+3. Calculate the ddG for each pair (ddG(A->B) = AVG(dGprotein) - AVG(dGwater)):
 $$ddG(A \to B) = \bar{dG_{\text{protein}}} - \bar{dG_{\text{water}}}$$
-
-5. Calculate SEM (Standard Error of the Mean) for protein and water: $$SEM = \frac{\sigma}{\sqrt{n}}$$
-6. Calculate SEM final: $$SEM_{f} = \sqrt{SEM_{\text{water}}^2 + SEM_{\text{protein}}^2}$$
-Finally we get: 
+4. Calculate the Standard Error of the Mean (SEM) for the protein and water environments:
+$$SEM = \frac{\sigma}{\sqrt{n}}$$
+5. Calculate the final SEM:
+$$SEM_{f} = \sqrt{SEM_{\text{water}}^2 + SEM_{\text{protein}}^2}$$
+6. Finally, obtain the ddG value along with the error margin:
 $$ddG (A \to B) \pm \sqrt{SEM_{\text{water}}^2 + SEM_{\text{protein}}^2}$$
 
-Tipically you will want to compare this results with experimental ones. 
-You can calculate experimental ddG from Ki (_constant of inhibition_) using the following formula: 
+Typically, you would compare these results with experimental data. To calculate experimental ddG from Ki (constant of inhibition), you can use the following formula:
+
 $$\Delta G^\circ = -RT \ln K$$
 
 ### Comparing ddG with experimental data:
-So far all we have done is find a theorical value for ddG between several pairs of  ligands. However, this result alone is not good enough since is based on docking poses carried out with very optial conditions. Thus, the real binding mode of the ligands may vary. That raises the need for comparing Theorical ddG with Experimental ddG. If both look similar. There's several ways to calculate ddG from experimental data, the one covered here will be from using Ki (_constant of inhibition_).
+So far, we have obtained theoretical values for ddG between various pairs of ligands based on docking poses under optimal conditions. However, this information alone may not suffice since the actual binding mode of the ligands could differ. Hence, it is essential to compare the theoretical ddG with experimental ddG.
 
-Let's see first what is the general formula for calculating dG: 
- ΔG° = -RT ln K
-Where:
+$$\Delta G^\circ = -RT \ln K$$
 _R_ is the gas constant with a value of 8.314 J 8.314 J K-1mol-1
-T
+_T_ is the temperature of the reaction in Kelvin.
+_ΔG°_ the standard Gibbs free energy change between two states. 
 
-T is the temperature of the reaction in Kelvin.
+The predicted ΔG° values from relative binding free energy calculations can be directly compared to Ki values. However, in many cases, only experimental IC50 values are available. Although IC50 and Ki values are sometimes used interchangeably, it's crucial to consider the compound's mechanism of inhibition and the specific assay conditions. The Cheng−Prusoff equation provides a mathematical description of the relationship between Ki and IC50 for competitive inhibitors that bind to the free enzyme:
 
-ΔG°
+$$K_i = \frac{IC_{50}}{1 + \frac{[S]}{K_m}}$$
 
-It is important to realise that we are talking about standard free energy change here - NOT the free energy change at whatever temperature the reaction was carried out.
- - The Cheng-Prusoff equation is Ki =  IC50/(1+ [S]/Km)
-Ki = the inhibitory constant, defined as the equilibrium concentration of an inhibitory ligand when 50% of the receptor sites are occupied if no competing substrate is present.   
+_Ki_ = the inhibitory constant, defined as the equilibrium concentration of an inhibitory ligand when 50% of the receptor sites are occupied if no competing substrate is present.   
 
-IC50 = The concentration at which the inhibitory ligand displaces 50% of the substrate.   
+_IC50_ = The concentration at which the inhibitory ligand displaces 50% of the substrate.   
 
-[S] = The concentration of the substrate used in the binding assay.  
+_[S]_ = The concentration of the substrate used in the binding assay.  
 
-Km = the affinity constant of the substrate, defined as the equilibrium concentration that results in substrate occupying 50% of the receptor sites in the absence of competitio
+_Km_ = the affinity constant of the substrate, defined as the equilibrium concentration that results in substrate occupying 50% of the receptor sites in the absence of competitio
+
+If the _[S]_ is small enough (depends on what your data) one can assume then that [S] = 0 so that:
+$$K_i = \frac{IC_{50}}{1 + \frac{0}{K_m}}$$
+and therefore: 
+$$K_i = {IC_{50}}$$
+
+For a more detailed understanding of the topic, refer to [further reading](https://pubs.acs.org/doi/pdf/10.1021/acs.jcim.7b00564).
 
 #### How to Use collect_dG.py
 `collect_dG.py` is a python script that allows you to call analyze_FEP.py for different folders (usually 1.protein/FEP_pair and 2.water/FEP_pair) with a single command  and stores the results in different .csv files so it's easier to work with the results later on.

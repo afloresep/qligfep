@@ -125,6 +125,9 @@ So far, we have collected the dG values for each ligand pair in water and in pro
 
 ## Following steps:
 ### Calculating ddG: 
+First, we have to ask the question: _Why do we want to calculate ddG in the first place?_
+We want to calculate the difference in binding free energy (ddGbind) for two ligands (or several pair of ligands for that matter), beacause it allows us to determine their relative binding affinities to the receptor (usually a protein).
+
 It will be easier to create an excel file. You can download an excel template from [here](https://github.com/afloresep/qligfep/blob/master/ddG_template.xlsx)
 
 In summary, with the help of the template we will calculate: 
@@ -144,10 +147,30 @@ Tipically you will want to compare this results with experimental ones.
 You can calculate experimental ddG from Ki (_constant of inhibition_) using the following formula: 
 $$\Delta G^\circ = -RT \ln K$$
 
+### Comparing ddG with experimental data:
+So far all we have done is find a theorical value for ddG between several pairs of  ligands. However, this result alone is not good enough since is based on docking poses carried out with very optial conditions. Thus, the real binding mode of the ligands may vary. That raises the need for comparing Theorical ddG with Experimental ddG. If both look similar. There's several ways to calculate ddG from experimental data, the one covered here will be from using Ki (_constant of inhibition_).
 
+Let's see first what is the general formula for calculating dG: 
+ ΔG° = -RT ln K
+Where:
+_R_ is the gas constant with a value of 8.314 J 8.314 J K-1mol-1
+T
+
+T is the temperature of the reaction in Kelvin.
+
+ΔG°
+
+It is important to realise that we are talking about standard free energy change here - NOT the free energy change at whatever temperature the reaction was carried out.
+ - The Cheng-Prusoff equation is Ki =  IC50/(1+ [S]/Km)
+Ki = the inhibitory constant, defined as the equilibrium concentration of an inhibitory ligand when 50% of the receptor sites are occupied if no competing substrate is present.   
+
+IC50 = The concentration at which the inhibitory ligand displaces 50% of the substrate.   
+
+[S] = The concentration of the substrate used in the binding assay.  
+
+Km = the affinity constant of the substrate, defined as the equilibrium concentration that results in substrate occupying 50% of the receptor sites in the absence of competitio
 
 #### How to Use collect_dG.py
-
 `collect_dG.py` is a python script that allows you to call analyze_FEP.py for different folders (usually 1.protein/FEP_pair and 2.water/FEP_pair) with a single command  and stores the results in different .csv files so it's easier to work with the results later on.
 
 To use collect_dG.py, you need to provide at least 4 arguments when calling it on the command line:

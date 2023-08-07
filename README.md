@@ -9,7 +9,7 @@ Revised the README.md file in the tutorial section, making it more coherent and 
 3. Modified setup.py: Made several enhancements to setup.py for a smoother user experience:
     1. Now, setup.py automatically copies files from 1.ligprep to 3.setup, eliminating the need for manual intervention.
     2. If there is an existing folder from previous runs (e.g., 1.protein), setup.py creates a new folder (e.g., 1.protein-2) to avoid conflicts.
-    3. Implemented an intelligent search in qprep.inp to find the cys bond that requires adding. It then references the atom number from the search results and incorporates it when calling QligFEP.
+    3. Implemented an intelligent search in qprep.inp to find the cys bond that requires adding. It then references the atom number in protein.pdb file and incorporates it when calling QligFEP.
     4. Enhanced QligFEP.py: Introduced dynamic generation of submit.sh files in QligFEP.py based on the cluster specified as an argument (CSB/TETRA). This improvement ensures seamless compatibility with different cluster environments.
 
 5. Added Template with Comprehensive Scripts: Included a template containing all the necessary scripts for each step of the process. This comprehensive template streamlines the execution of the workflow, enhancing overall efficiency.

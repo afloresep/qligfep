@@ -73,17 +73,29 @@ In the next stage we will prepare the input files for the actual simulations.
 We need to give QligFEP a list of what pairs should be using each time to calculate ddG. Good practice is to select pairs as similar as possible and go from more complex to less complex. The `pairs.txt`file must contain the name of the ligand (the same as the one in the .pdb file stored in `1.ligprep` folder) **without the .pdb sufix** and separated from one antoher with a single space. Do that for every pair of ligands. 
 
 For example: Let's say we have 4 ligands with different moieties (R): 
+
 Ligand_A( R = 2-F-Benzyl) # stored as ligand_a.pdb in 1.ligprep
+
 Ligand_B( R = Benzyl)  # stored as ligand_b.pdb in 1.ligprep
+
 Ligand_C( R = Propyl)  # stored as ligand_c.pdb in 1.ligprep
+
 Ligand_D( R = Metyl)  # stored as ligand_d.pdb in 1.ligprep
+
 Then the `pairs.txt` should look like this:
+
 ligand_a ligand_b
+
 ligand_c ligand_d
+
 One can also invert the pairs to see if the results are similar as they should be equal in absolute value. So:
+
 ligand_a ligand_b
+
 ligand_b ligand_a
+
 ligand_c ligand_d
+
 ligand_d ligand_c
 
 #### 3.1.2 QligFEP.py

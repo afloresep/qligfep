@@ -114,7 +114,7 @@ A typical procedure is to put the two systems in a top layer folder to easily tr
 
 If you want to submit all the jobs at once without having to go into each pair folder, you can copy `subimt_all.py` to your `1.protein` or `2.water` folder and then run it. This python script will find all the folders starting as 'FEP_' (basically, all the folders named after the pairs.txt file) and submit their job. 
 
-_Note: Only in this forked version submit_all.py exists. If your using the original repository you will have to submit all the jobs manually or copy the code for submit_all.py from [CHAAANGEEEEE](www.google.com) and add it to your workspace._
+_Note: Only in this forked version submit_all.py exists. If your using the original repository you will have to submit all the jobs manually or copy the code for submit_all.py from [here](https://github.com/afloresep/qligfep/blob/master/submit_all.py) and add it to your workspace._
 
 # 4. Analyze dG in protein and water. 
 Run the analyze_FEP.py script with the appropriate parameters:

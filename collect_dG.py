@@ -7,10 +7,10 @@ import shutil
 
 def call_analyze_FEP(folder_path):
     try:
-        # Call analyze_FEP_2.py using subprocess and capture the output
+        # Call analyze_FEP.py using subprocess and capture the output
         result = subprocess.run(['python', 'analyze_FEP.py', '-F', folder_path, '-C', 'CSB'], capture_output=True, text=True)
 
-        # Return the standard output of analyze_FEP_2.py and the generated .csv filename
+        # Return the standard output of analyze_FEP2.py and the generated .csv filename
         print(result.stdout)
         csv_name = os.path.basename(folder_path) + '.csv'
         return csv_name
@@ -36,9 +36,9 @@ if len(sys.argv) >= 2:
     os.makedirs(output_folder, exist_ok=True)
 
 
-# Loop through the list of folders and call analyze_FEP_2.py for each folder
+# Loop through the list of folders and call analyze_FEP.py for each folder
 for folder_path in path_list:
-    # Call the function to run analyze_FEP_2.py for the current folder
+    # Call the function to run analyze_FEP.py for the current folder
     call = call_analyze_FEP(folder_path)
 
 # List to store the generated .csv filenames

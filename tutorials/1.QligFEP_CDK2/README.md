@@ -200,21 +200,3 @@ and therefore:
 $$K_i = {IC_{50}}$$
 
 For a more detailed understanding of the topic, refer to [further reading](https://pubs.acs.org/doi/pdf/10.1021/acs.jcim.7b00564).
-
-#### How to Use collect_dG.py
-`collect_dG.py` is a python script that allows you to call analyze_FEP.py for different folders (usually 1.protein/FEP_pair and 2.water/FEP_pair) with a single command  and stores the results in different .csv files so it's easier to work with the results later on.
-
-To use collect_dG.py, you need to provide at least 4 arguments when calling it on the command line:
-- collect_dG.py
-- folder_name (the folder where the .csv files will be stored)
-- path_to_folder1
-- path_to_folder2
-
-and is called from the qligfep folder like this: `python collect_dG.py folder_name path_to_folder1 path_to_folder2`
-
-#### Example for tutorial.
-After going trough steps 1, 2, 3 and from `qligfep`folder write
-`python collect_dG.py dG-FEP_17-22_2 tutorials/1.QligFEP_CDK2/3.setupFEP/1.protein/FEP_17-22 tutorials/1.QligFEP_CDK2/3.setupFEP/2.water/FEP_17-22`
-
-Now, there should be 2 .csv files dG.csv and dG-1.csv inside the dG-FEP_17-22 folder. Each .csv file contains the path to the folder from which the dG values were calculated along with the calculation results. In later versions, it is expected to create a single .csv file with all the results (problems with merging the files are being addressed).
-

@@ -131,9 +131,7 @@ Nonetheless, if you want to call analzye_FEP.py for all folders located in 1.pro
 
 _Note: Again, these are python scripts specific to this repository and may not be available in the original repository where you will have to do it manually._
 
-Additionally, you can try using `collect_dG.py` script to analyze multiple folders simultaneously. Refer to the provided instructions below the page on how to use this script. The output will contain dG, dGf, dGr, dGos, and dGbar values, with dGbar typically being used. There will be 10 values corresponding to 10 replicas/runs (which can be modified). Any "nan" values are expected and will be handled appropriately.
-
-**To change the number of runs**, modify the FEP_submit.sh file located in the path: 
+**To change the number of runs**, modify the FEP_submit.sh file located in the path of each pair: 
 /home/USER/QLIGFEP/qligfep/tutorials/1.QligFEP_CDK2/3.setupFEP/1.protein/FEP_17-22
 
 It is necessary to collect dG values for both ligand pairs in water and protein since a complete thermodynamic cycle is needed to calculate ddG.

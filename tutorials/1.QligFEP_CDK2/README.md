@@ -56,10 +56,10 @@ This will return the coordinates [0.535:26.772:8.819]
 ### 2.2 Add the COG coordinates directly in protprep.py:
 `python "$qligfep/protprep.py" -p path_to_protein.pdb -r RADIUS -c COORDINATES -w -P CLUSTER_NAME --noclean`
 
-The reason we want to use '--noclean' is so files like 'qprep.inp' are displayed. This file in particular is going to be used in the next stage by `setup.py` to obtain information about cystein bonds that need to be added. 
-During this process you may encounter 'FileNotFoundError: [Errno 2] No such file or directory: 'top_p.pdb'. See 'Common Errors' section at the bottom of this file to learn more. 
+_The '--noclean' flag serves a specific purpose by retaining files such as 'qprep.inp' for display. In subsequent stages, particularly during utilization by 'setup.py', the contents of this file become instrumental in gathering data concerning necessary cysteine bond additions. Throughout this process, it's possible to encounter an error marked by 'FileNotFoundError: [Errno 2] No such file or directory: 'top_p.pdb'.' For a more comprehensive understanding of this issue, refer to the 'Common Errors messages' section located at the end of this document._
 
 For this tutorial:
+
 - `python "$qligfep/protprep.py" -p 1h1s_PrepWiz.pdb -r 22 -c [0.535:26.772:8.819] -w -P CSB`
 
 After this, you should have three new files in 2.protprep: protPREP.log  protein.pdb  water.pdb.
@@ -73,34 +73,31 @@ In the next stage we will prepare the input files for the actual simulations.
 ### 3.1 Prepare input files
 
 #### 3.1.1 Pairs.txt
-We need to give QligFEP a list of what pairs should be using each time to calculate ddG. Good practice is to select pairs as similar as possible and go from more complex to less complex. The `pairs.txt`file must contain the name of the ligand (the same as the one in the .pdb file stored in `1.ligprep` folder) **without the .pdb sufix** and separated from one antoher with a single space. Do that for every pair of ligands. 
+To ensure accurate calculation of ddG, QligFEP requires a well-defined list of paired combinations. Following a recommended protocol, it's advisable to curate pairs that exhibit maximal similarity while progressing from intricate to simpler compositions. The 'pairs.txt' file plays a pivotal role in this process and mandates specific conventions.
 
-For example: Let's say we have 4 ligands with different moieties (R): 
+Each entry within 'pairs.txt' corresponds to a pair of ligands, and it should contain the ligand's identifier, matching the name in the corresponding '.pdb' file within the '1.ligprep' folder. The identifier should exclude the '.pdb' extension, with pairs differentiated by a single space. This procedure is to be repeated for every pair of ligands.
 
-Ligand_A( R = 2-F-Benzyl) # stored as ligand_a.pdb in 1.ligprep
+For instance, let's consider an illustrative scenario with four distinct ligands, each characterized by a different moiety (R):
 
-Ligand_B( R = Benzyl)  # stored as ligand_b.pdb in 1.ligprep
+Ligand_A (R = 2-F-Benzyl), stored as 'ligand_a.pdb' in the '1.ligprep' folder.
+Ligand_B (R = Benzyl), stored as 'ligand_b.pdb' in the '1.ligprep' folder.
+Ligand_C (R = Propyl), stored as 'ligand_c.pdb' in the '1.ligprep' folder.
+Ligand_D (R = Methyl), stored as 'ligand_d.pdb' in the '1.ligprep' folder.
 
-Ligand_C( R = Propyl)  # stored as ligand_c.pdb in 1.ligprep
-
-Ligand_D( R = Metyl)  # stored as ligand_d.pdb in 1.ligprep
-
-Then the `pairs.txt` should look like this:
-
+The corresponding 'pairs.txt' file should be structured as follows:
+```
 ligand_a ligand_b
-
 ligand_c ligand_d
+```
 
 One can also invert the pairs to see if the results are similar as they should be equal in absolute value. So:
 
+```
 ligand_a ligand_b
-
 ligand_b ligand_a
-
 ligand_c ligand_d
-
 ligand_d ligand_c
-
+```
 #### 3.1.2 QligFEP.py
 This stage uses `$qligfep/QligFEP.py`. You can use the -h flag to get more specifics on all the input variables. This folder includes a useful top level script, `generate.py`, that takes the pairs.txt file as input that specifies the ligand pairs that will be used in this simulation.
 
@@ -109,15 +106,17 @@ We then run QligFEP.py by running setup.py:
 
 _Note: In this forked version, setup.py is capable of moving the files necessary to use QligFEP.py. If you're using a different version of setup.py, you will have to manually move all the ligands.pbd from `1.ligprep`, the protein.pdb and water.pdb files from `2.protprep`_ in order to do this step. 
 
-This should result in a 1.protein and 2.water folder, containing the two systems necessary to perform the calculation. Simply go into the folder (1.PROTEIN OR 2.WATER), then go into the pair folder whose job you want to submit and run
+This should result in a 1.protein and 2.water folder, containing folders for each pair of ligands described in the `pairs.txt` file. A message will be printed specifying the cystein bonds added. Make sure they are correct (i.e. no atoms duplicated). A `qprep ended normally`message should be printed for each pair correctly added to the folder.
+
+To perform the calculation. Simply go into the folder (1.PROTEIN OR 2.WATER), then go into the pair folder whose job you want to submit and run
 `./FEP_submit.sh`
 
 This script will either submit your jobs to a slurm queue (see the setup section in $setupFEP/README.md for a more detailed description). Alternatively the jobs can be run on your local machine.
 A typical procedure is to put the two systems in a top layer folder to easily track running calculations (e.g. 1.TESTRUN) in the case of this example. Of course, these toplayer scripts can be easily adjusted for any other use (e.g. to calculate solvation free energies, you add a water and vacuum leg, instead of protein water.
 
-If you want to submit all the jobs at once without having to go into each pair folder, you can copy `subimt_all.py` to your `1.protein` or `2.water` folder and then run it. This python script will find all the folders starting as 'FEP_' (basically, all the folders named after the pairs.txt file) and submit their job. 
+If you want to submit all the jobs at once without having to go into each pair folder, you can copy `submit_FEP.py` to your `1.protein` or `2.water` folder and then run it. This python script will find all the folders starting as 'FEP_' (basically, all the folders named after the pairs.txt file) and submit their job. 
 
-_Note: Only in this forked version submit_all.py exists. If your using the original repository you will have to submit all the jobs manually or copy the code for submit_all.py from [here](https://github.com/afloresep/qligfep/blob/master/submit_all.py) and add it to your workspace._
+_Note: Only in this forked version submit_FEP.py exists. If your using the original repository you will have to submit all the jobs manually or copy the code for submit_FEP.py from [here](https://github.com/afloresep/qligfep/blob/master/submit_FEP.py) and add it to your workspace._
 
 # 4. Analyze dG in protein and water. 
 Run the analyze_FEP.py script with the appropriate parameters:

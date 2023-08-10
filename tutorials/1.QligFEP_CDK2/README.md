@@ -54,7 +54,10 @@ This will return the coordinates [0.535:26.772:8.819]
 ! Make sure to **add -i before the pdb file**. 
 
 ### 2.2 Add the COG coordinates directly in protprep.py:
-`python "$qligfep/protprep.py" -p path_to_protein.pdb -r RADIUS -c COORDINATES -w -P CLUSTER_NAME`
+`python "$qligfep/protprep.py" -p path_to_protein.pdb -r RADIUS -c COORDINATES -w -P CLUSTER_NAME --noclean`
+
+The reason we want to use '--noclean' is so files like 'qprep.inp' are displayed. This file in particular is going to be used in the next stage by `setup.py` to obtain information about cystein bonds that need to be added. 
+During this process you may encounter 'FileNotFoundError: [Errno 2] No such file or directory: 'top_p.pdb'. See 'Common Errors' section at the bottom of this file to learn more. 
 
 For this tutorial:
 - `python "$qligfep/protprep.py" -p 1h1s_PrepWiz.pdb -r 22 -c [0.535:26.772:8.819] -w -P CSB`
@@ -198,3 +201,47 @@ and therefore:
 $$K_i = {IC_{50}}$$
 
 For a more detailed understanding of the topic, refer to [further reading](https://pubs.acs.org/doi/pdf/10.1021/acs.jcim.7b00564).
+
+
+## Common Error messages:
+### - qligfep/protprep.py Error Handling:
+`FileNotFoundError: [Errno 2] No such file or directory: 'top_p.pdb'`: 
+The most prevalent cause for encountering this error is an erroneous configuration within the 'qprep.inp' file. In certain instances, the 'qprep.inp' file contains two or more cysteine bonds utilizing the same atom, which disrupts the process of generating the topology PDB file. To address this, manual intervention is required to remove the conflicting cysteine bond that employs atoms that have been previously used. The following steps outline how to rectify this issue:
+
+#### 1. Manual Correction of qprep.inp
+Open your 'qprep.inp' file using a text editor such as vim or nano. Examine the content and locate the lines involving 'addbond' commands, such as
+Practical example: 
+###
+addbond 69:SG 164:SG y
+addbond 75:SG 168:SG y
+addbond 151:SG 163:SG y
+addbond 163:SG 164:SG
+###
+
+In the final line, observe that 'addbond' 3 and 'addbond' 4 utilize the same atom '163:SG'. Delete the problematic line (last 'addbond') to resolve the conflict. Save the modified 'qprep.inp' file.
+
+#### 2. Utilize Modified qprep.inp with qprep:
+Execute the 'qprep' program from the 'q6/bin' directory, utilizing the newly edited 'qprep.inp' file:
+`path_to_q6_folder/q6/bin/qprep < qprep.inp`
+Please adapt the command based on the location of your 'q6/bin' directory. For instance, if the directory is located at '/home/user/QLIGFEP/q6/', the command would be:
+`/home/user/QLIGFEP/q6/bin/qprep < qprep.inp`
+
+#### 3. Substitute Protein PDB:
+Upon completing the previous step, you should find a file named 'complexnotexcluded.pdb' alongside other files. Replace your original protein PDB file ('your_protein.pdb') with this modified PDB file using the 'cp' command
+`cp complexnotexcluded.pdb your_protein.pdb`
+
+
+#### 4. Invoke qprep.py with Updated PDB:
+Once the replacement is done, you can rerun the 'qprep.py' script with the newly updated PDB file using the following command:
+`python "$qligfep/protprep.py" -p your_protein.pdb -r RADIUS -c COORDINATES -w -P CLUSTER_NAME --noclean`
+Ensure to replace placeholders such as 'RADIUS', 'COORDINATES', and 'CLUSTER_NAME' with actual values as needed.
+
+
+
+
+
+
+
+
+
+

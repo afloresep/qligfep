@@ -60,7 +60,7 @@ _The '--noclean' flag serves a specific purpose by retaining files such as 'qpre
 
 For this tutorial:
 
-- `python "$qligfep/protprep.py" -p 1h1s_PrepWiz.pdb -r 22 -c [0.535:26.772:8.819] -w -P CSB`
+- `python "$qligfep/protprep.py" -p 1h1s_PrepWiz.pdb -r 22 -c [0.535:26.772:8.819] -w -P CSB --noclean`
 
 After this, you should have three new files in 2.protprep: protPREP.log  protein.pdb  water.pdb.
 

@@ -42,7 +42,7 @@ systems = ['protein-TETRA', 'water-TETRA']
 cnt = 0
 
 # Change this to where you installed QligFEP
-setupFEP = 'python /home/aflores/QLIGFEP/qligfep/QligFEP.py'
+setupFEP = 'python /home/USER/QLIGFEP/qligfep/QligFEP.py'
 windows = '100'
 
 # Open qprep.inp where cysbond to add are specified.

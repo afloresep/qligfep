@@ -25,6 +25,7 @@ protprep_folder = os.path.join(current_folder, '..', '2.protprep')
 # Check if the '2.protprep' directory exists
 if not os.path.exists(protprep_folder):
     print("Error: '2.protprep' directory not found.")
+    print("Have you used --noclean when calling qligfep/protprep.py?")
 else:
     # Import 'protein.pdb'
     protein_pdb = os.path.join(protprep_folder, 'protein.pdb')
@@ -41,7 +42,7 @@ systems = ['protein-TETRA', 'water-TETRA']
 cnt = 0
 
 # Change this to where you installed QligFEP
-setupFEP = 'python /home/aflores/QLIGFEP/qligfep/QligFEP.py'
+setupFEP = 'python /home/USER/QLIGFEP/qligfep/QligFEP.py'
 windows = '100'
 
 # Open qprep.inp where cysbond to add are specified.
@@ -70,7 +71,6 @@ if os.path.isfile(protprep_folder+'/qprep.inp'):
                         cys.append(atom_2)
     pairs = [cys[i] + '_' + cys[i+1] for i in range(0, len(cys), 2)] # Add '_' between atoms and match style required by QligFEP
     cysbond =  ','.join(pairs)
-    cysbond = '995_2443,1080_2510,2267_2433'
     print('cysbond added: ', cysbond) 
     for system in systems:
         cnt += 1
